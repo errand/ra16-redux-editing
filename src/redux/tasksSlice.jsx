@@ -8,16 +8,20 @@ export const tasksSlice = createSlice({
     addAction: (state, action) => {
       const newTask = {
         id: nanoid(),
-        name: action.payload.task
+        title: action.payload.title,
+        price: action.payload.price
       }
       state.push(newTask);
     },
-    deleteAction: (state, action)=>{
+    deleteAction: (state, action) => {
       return state.filter((item) => item.id !== action.payload.id);
+    },
+    editAction: (state, action) => {
+      return state.filter((item) => item.id === action.payload.id);
     }
   }
 });
 
-export const {addAction, deleteAction} = tasksSlice.actions;
+export const {addAction, deleteAction, editAction} = tasksSlice.actions;
 
 export default tasksSlice.reducer;

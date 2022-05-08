@@ -9,7 +9,7 @@ export default function TasksList() {
   return (
     <ul className="list-group">
       {tasks.map((task) => (
-        <Task key={task.id} title={task.name} completed={task.status} />
+        <Task key={task.id} id={task.id} title={task.title} price={task.price} completed={task.status} />
       ))}
     </ul>
   );
