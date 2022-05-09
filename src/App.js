@@ -1,13 +1,13 @@
 import './App.css';
 
-import AddTask from './components/AddTask';
+import Form from './components/Form';
 import TasksList from './components/TasksList';
 
 const App = () => {
   return (
     <div className="tasks container">
-      <h1 className="title">My Tasks</h1>
-      <AddTask />
+      <h1 className="title">Tasks</h1>
+      <Form />
       <TasksList />
     </div>
   );

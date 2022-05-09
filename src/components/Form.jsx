@@ -1,41 +1,51 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from "react-redux";
-import { addAction, editAction } from "../redux/tasksSlice";
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from "react-redux";
+import { addAction, changeAction } from "../redux/tasksSlice";
 
-export default function AddTask() {
+export default function Form() {
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
   const [message, setMessage] = useState('')
   const [priceMessage, setPriceMessage] = useState('')
   const [editing, setEditing] = useState(false)
+  const [editingId, setEditingId] = useState(null)
 
   const dispatch = useDispatch();
-  const list = useSelector((state) => state.tasks)
-  console.log(list)
+  const tasks = useSelector(state => state.tasks);
+
+  useEffect(() => {
+    const editing = tasks.filter(task => task.status === 'editing')
+    if(editing.length > 0) {
+      setEditing(true)
+      setEditingId(editing[0].id)
+      setTitle(editing[0].title);
+      setPrice(editing[0].price);
+    } else {
+      setTitle('');
+      setPrice('');
+    }
+  }, [tasks])
 
   const onSubmit = (event) => {
     event.preventDefault();
 
-    if(title.trim().length === 0)
-    {
+
+    if(title.trim().length === 0) {
       setMessage('Empty input is forbidden')
       setTitle('');
       return;
     }
 
-    if(!/[+-]?([0-9]*[.])?[0-9]+/.test(price.trim()))
-    {
+    if(!/^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$/.test(price.trim())) {
       setPriceMessage('Price should be digits')
-      setPrice('');
       return;
     }
 
-    dispatch(
-      addAction({
-        title,
-        price
-      })
-    );
+    if(editing) {
+      dispatch(changeAction({editingId, title, price, status: ''}));
+    } else {
+      dispatch(addAction({title, price, status: ''}));
+    }
 
     setTitle('');
     setPrice('');
@@ -43,8 +53,14 @@ export default function AddTask() {
     setPriceMessage('')
   };
 
+  const onCancel = () => {
+    setEditing(false)
+    setTitle('')
+    setPrice('')
+  }
+
   return (
-    <form className="form" onSubmit={onSubmit}>
+    <form className="form mb-3" onSubmit={onSubmit}>
       <div className="row">
         <div className="col-auto">
           <input
@@ -68,8 +84,9 @@ export default function AddTask() {
         </div>
         <div className="col-auto">
           <button className="btn btn-success">
-            Add task
+            {editing ? 'Save task' : 'Add task'}
           </button>
+          {editing && <button className="btn btn-warning ms-2" onClick={onCancel}>Cancel</button>}
         </div>
       </div>
 
